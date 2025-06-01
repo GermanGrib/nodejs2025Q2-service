@@ -33,14 +33,17 @@ export class TrackService {
   create(createTrackDto: CreateTrackDto): Track {
     const newTrack: Track = {
       id: crypto.randomUUID(),
-      ...createTrackDto,
+      name: createTrackDto.name,
+      artistId: createTrackDto.artistId ?? null,
+      albumId: createTrackDto.albumId ?? null,
+      duration: createTrackDto.duration,
     };
 
     this.tracks.push(newTrack);
     return newTrack;
   }
 
-  update(id: string, updatedTrackDto: UpdateTrackDto): Track {
+  update(id: string, updateTrackDto: UpdateTrackDto): Track {
     if (!isValidUUID(id)) {
       throw new BadRequestException('Invalid UUID');
     }
@@ -50,12 +53,20 @@ export class TrackService {
       throw new NotFoundException('Track not found');
     }
 
-    const track = this.tracks[trackIndex];
     const updatedTrack = {
-      ...track,
-      ...updatedTrackDto,
+      ...this.tracks[trackIndex],
+      ...updateTrackDto,
+      artistId:
+        updateTrackDto.artistId !== undefined
+          ? updateTrackDto.artistId
+          : this.tracks[trackIndex].artistId,
+      albumId:
+        updateTrackDto.albumId !== undefined
+          ? updateTrackDto.albumId
+          : this.tracks[trackIndex].albumId,
     };
 
+    this.tracks[trackIndex] = updatedTrack;
     return updatedTrack;
   }
 

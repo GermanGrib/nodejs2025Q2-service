@@ -32,7 +32,9 @@ export class AlbumService {
   create(createAlbumDto: CreateAlbumDto): Album {
     const newAlbum: Album = {
       id: crypto.randomUUID(),
-      ...createAlbumDto,
+      name: createAlbumDto.name,
+      year: createAlbumDto.year,
+      artistId: createAlbumDto.artistId ?? null,
     };
 
     this.albums.push(newAlbum);
@@ -49,10 +51,13 @@ export class AlbumService {
       throw new NotFoundException('Album not found');
     }
 
-    const album = this.albums[albumIndex];
     const updatedAlbum = {
-      ...album,
+      ...this.albums[albumIndex],
       ...updateAlbumDto,
+      artistId:
+        updateAlbumDto.artistId !== undefined
+          ? updateAlbumDto.artistId
+          : this.albums[albumIndex].artistId,
     };
 
     this.albums[albumIndex] = updatedAlbum;

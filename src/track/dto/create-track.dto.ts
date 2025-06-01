@@ -12,12 +12,12 @@ export class CreateTrackDto {
   @IsString()
   name: string;
 
-  @ValidateIf((o) => o.artistId !== undefined)
+  @ValidateIf((o) => o.artistId !== null)
   @IsUUID('4', { message: 'artistId must be a valid UUID or null' })
   @Type(() => String)
   artistId: string | null;
 
-  @ValidateIf((o) => o.albumId !== undefined)
+  @ValidateIf((o) => o.albumId !== null)
   @IsUUID('4', { message: 'albumId must be a valid UUID or null' })
   @Type(() => String)
   albumId: string | null;

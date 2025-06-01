@@ -11,12 +11,14 @@ export class UpdateTrackDto {
   @IsString()
   name?: string;
 
-  @ValidateIf((o) => o.artistId !== undefined && o.artistId !== null)
-  @IsUUID('4', { message: 'artistId must be a valid UUID' })
+  @IsOptional()
+  @ValidateIf((o) => o.artistId !== undefined)
+  @IsUUID('4', { message: 'artistId must be a valid UUID or null' })
   artistId?: string | null;
 
-  @ValidateIf((o) => o.albumId !== undefined && o.albumId !== null)
-  @IsUUID('4', { message: 'albumId must be a valid UUID' })
+  @IsOptional()
+  @ValidateIf((o) => o.albumId !== undefined)
+  @IsUUID('4', { message: 'albumId must be a valid UUID or null' })
   albumId?: string | null;
 
   @IsOptional()
