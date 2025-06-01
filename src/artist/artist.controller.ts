@@ -12,42 +12,42 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdatePasswordDto } from './dto/update-password.dto';
+import { ArtistService } from './artist.service';
+import { CreateArtistDto } from './dto/create-artist.dto';
+import { UpdateArtistDto } from './dto/update-artist.dto';
 
-@Controller('user')
+@Controller('artist')
 @UsePipes(new ValidationPipe())
-export class UserController {
-  constructor(private readonly userService: UserService) {}
+export class ArtistController {
+  constructor(private readonly artistService: ArtistService) {}
 
   @Get()
   async findAll() {
-    return this.userService.findAll();
+    return this.artistService.findAll();
   }
 
   @Get(':id')
   async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.userService.findById(id);
+    return this.artistService.findById(id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateArtistDto) {
+    return this.artistService.create(createUserDto);
   }
 
   @Put(':id')
-  async updatePassword(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() updatePasswordDto: UpdatePasswordDto,
+    @Body() updateArtistDto: UpdateArtistDto,
   ) {
-    return this.userService.updatePassword(id, updatePasswordDto);
+    return this.artistService.update(id, updateArtistDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id', new ParseUUIDPipe()) id: string) {
-    this.userService.delete(id);
+    this.artistService.delete(id);
   }
 }

@@ -114,14 +114,14 @@ components:
       bearerFormat: JWT
 
 security:
-  - bearerAuth: []
+  - bearerAuth: [ ]
 
 paths:
   /login:
     post:
       tags:
         - Login
-      security: []
+      security: [ ]
       summary: Login
       description: Logins a user and returns a JWT-token
       requestBody:
@@ -625,8 +625,8 @@ paths:
     get:
       tags:
         - Artist
-      summary: Get all artists
-      description: Gets all artists
+      summary: Get all artist
+      description: Gets all artist
       responses:
         200:
           description: Successful operation

@@ -1,82 +1,64 @@
-import { User } from './entities/user.entity';
 import {
   BadRequestException,
-  ForbiddenException,
   NotFoundException,
 } from '../common/exceptions/http.exception';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdatePasswordDto } from './dto/update-password.dto';
 import { Injectable } from '@nestjs/common';
 import { validate as isValidUUID } from 'uuid';
+import { Artist } from './entities/artist.entity';
+import { CreateArtistDto } from './dto/create-artist.dto';
+import { UpdateArtistDto } from './dto/update-artist.dto';
 
 @Injectable()
-export class UserService {
-  private users: User[] = [];
+export class ArtistService {
+  private artists: Artist[] = [];
 
-  findAll(): Omit<User, 'password'>[] {
-    return this.users.map((user) => {
-      const { password, ...userWithoutPassword } = user;
-      return userWithoutPassword;
-    });
+  findAll(): Artist[] {
+    return this.artists;
   }
 
-  findById(id: string): Omit<User, 'password'> {
+  findById(id: string): Artist {
     if (!isValidUUID(id)) {
       throw new BadRequestException('Invalid UUID');
     }
 
-    const user = this.users.find((user) => user.id === id);
-    if (!user) {
-      throw new NotFoundException('User not found');
+    const artist = this.artists.find((artist) => artist.id === id);
+    if (!artist) {
+      throw new NotFoundException('Artist not found');
     }
 
-    const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    return artist;
   }
 
-  create(createUserDto: CreateUserDto): Omit<User, 'password'> {
-    const newUser: User = {
+  create(createArtistDto: CreateArtistDto): Artist {
+    const newArtist: Artist = {
       id: crypto.randomUUID(),
-      login: createUserDto.login,
-      password: createUserDto.password,
-      version: 1,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
+      name: createArtistDto.name,
+      grammy: createArtistDto.grammy,
     };
 
-    this.users.push(newUser);
-    const { password, ...userWithoutPassword } = newUser;
-    return userWithoutPassword;
+    this.artists.push(newArtist);
+    return newArtist;
   }
 
-  updatePassword(
-    id: string,
-    updatePasswordDto: UpdatePasswordDto,
-  ): Omit<User, 'password'> {
+  update(id: string, updateArtistDto: UpdateArtistDto): Artist {
     if (!isValidUUID(id)) {
       throw new BadRequestException('Invalid UUID');
     }
 
-    const userIndex = this.users.findIndex((user) => user.id === id);
-    if (userIndex === -1) {
-      throw new NotFoundException('User not found');
+    const artistIndex = this.artists.findIndex((artist) => artist.id === id);
+    if (artistIndex === -1) {
+      throw new NotFoundException('Artist not found');
     }
 
-    const user = this.users[userIndex];
-    if (user.password !== updatePasswordDto.oldPassword) {
-      throw new ForbiddenException('Old password is wrong');
-    }
-
-    const updatedUser = {
-      ...user,
-      password: updatePasswordDto.newPassword,
-      version: user.version + 1,
-      updatedAt: Date.now(),
+    const artist = this.artists[artistIndex];
+    const updatedArtist = {
+      ...artist,
+      name: updateArtistDto.name,
+      grammy: updateArtistDto.grammy,
     };
 
-    this.users[userIndex] = updatedUser;
-    const { password, ...userWithoutPassword } = updatedUser;
-    return userWithoutPassword;
+    this.artists[artistIndex] = updatedArtist;
+    return updatedArtist;
   }
 
   delete(id: string): void {
@@ -84,11 +66,11 @@ export class UserService {
       throw new BadRequestException('Invalid UUID');
     }
 
-    const userIndex = this.users.findIndex((user) => user.id === id);
-    if (userIndex === -1) {
-      throw new NotFoundException('User not found');
+    const artistIndex = this.artists.findIndex((artist) => artist.id === id);
+    if (artistIndex === -1) {
+      throw new NotFoundException('Artist not found');
     }
 
-    this.users.splice(userIndex, 1);
+    this.artists.splice(artistIndex, 1);
   }
 }
