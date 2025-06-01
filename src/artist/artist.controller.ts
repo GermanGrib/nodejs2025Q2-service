@@ -33,8 +33,8 @@ export class ArtistController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createUserDto: CreateArtistDto) {
-    return this.artistService.create(createUserDto);
+  async create(@Body() createArtistDto: CreateArtistDto) {
+    return this.artistService.create(createArtistDto);
   }
 
   @Put(':id')
