@@ -7,6 +7,7 @@ import { validate as isValidUUID } from 'uuid';
 import { Track } from './entities/track.entity';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
+import { OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class TrackService {
@@ -69,5 +70,15 @@ export class TrackService {
     }
 
     this.tracks.splice(trackIndex, 1);
+  }
+
+  @OnEvent('artist.deleted')
+  handleArtistDeleted(artistId: string) {
+    this.tracks = this.tracks.map((track) => {
+      if (track.artistId === artistId) {
+        return { ...track, artistId: null };
+      }
+      return track;
+    });
   }
 }

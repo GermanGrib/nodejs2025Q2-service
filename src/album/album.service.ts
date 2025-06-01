@@ -6,6 +6,7 @@ import { Injectable } from '@nestjs/common';
 import { validate as isValidUUID } from 'uuid';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class AlbumService {
@@ -69,5 +70,15 @@ export class AlbumService {
     }
 
     this.albums.splice(albumIndex, 1);
+  }
+
+  @OnEvent('artist.deleted')
+  handleArtistDeleted(artistId: string) {
+    this.albums = this.albums.map((album) => {
+      if (album.artistId === artistId) {
+        return { ...album, artistId: null };
+      }
+      return album;
+    });
   }
 }

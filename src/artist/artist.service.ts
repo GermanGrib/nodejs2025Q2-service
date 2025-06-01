@@ -7,10 +7,13 @@ import { validate as isValidUUID } from 'uuid';
 import { Artist } from './entities/artist.entity';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class ArtistService {
   private artists: Artist[] = [];
+
+  constructor(private readonly eventEmitter: EventEmitter2) {}
 
   findAll(): Artist[] {
     return this.artists;
@@ -72,5 +75,6 @@ export class ArtistService {
     }
 
     this.artists.splice(artistIndex, 1);
+    this.eventEmitter.emit('artist.deleted', id);
   }
 }
