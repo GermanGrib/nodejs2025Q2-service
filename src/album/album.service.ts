@@ -7,6 +7,7 @@ import { validate as isValidUUID } from 'uuid';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { Album } from './entities/album.entity';
 
 @Injectable()
 export class AlbumService {

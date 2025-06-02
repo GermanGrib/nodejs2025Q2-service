@@ -15,6 +15,7 @@ export class UserService {
 
   findAll(): Omit<User, 'password'>[] {
     return this.users.map((user) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...userWithoutPassword } = user;
       return userWithoutPassword;
     });
@@ -29,7 +30,7 @@ export class UserService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userWithoutPassword } = user;
     return userWithoutPassword;
   }
@@ -45,6 +46,7 @@ export class UserService {
     };
 
     this.users.push(newUser);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userWithoutPassword } = newUser;
     return userWithoutPassword;
   }
@@ -75,6 +77,7 @@ export class UserService {
     };
 
     this.users[userIndex] = updatedUser;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userWithoutPassword } = updatedUser;
     return userWithoutPassword;
   }
