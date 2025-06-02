@@ -92,4 +92,14 @@ export class TrackService {
       return track;
     });
   }
+
+  @OnEvent('album.deleted')
+  handleAlbumDeleted(albumId: string) {
+    this.tracks = this.tracks.map((track) => {
+      if (track.albumId === albumId) {
+        return { ...track, albumId: null };
+      }
+      return track;
+    });
+  }
 }
