@@ -1,72 +1,65 @@
-# Home Library Service
+# Running the Application with Docker and Running Tests
 
-## Prerequisites
+## How to start the containers
 
-- Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+1. Open your terminal (command prompt).
 
-## Downloading
+2. Navigate to the project folder (where the `docker-compose.yml` file is located).
 
-```
-git clone {repository URL}
-```
+3. Run this command to build and start the containers:
 
-## Installing NPM modules
-
-```
-npm install
+```bash
+docker-compose up --build -d
 ```
 
-## Running application
+- This command will download necessary images, build your app, and start everything in the background.
 
+4. Check that the containers are running:
+
+```bash
+docker ps
 ```
-npm start
+
+- You should see containers named `nest_app` and `postgres_container` in the list.
+
+---
+
+## How to enter the application container terminal
+
+Run this command:
+
+```bash
+docker exec -it nest_app sh
 ```
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+- This will open a terminal inside the app container.
 
-## Testing
+---
 
-After application running open new terminal and enter:
+## How to run tests inside the container
 
-To run all tests without authorization
+Once inside the container terminal, run:
 
-```
+```bash
 npm run test
 ```
 
-To run only one of all test suites
+- This will start the app’s tests and show the results in the terminal.
+
+---
+
+## How to exit the container terminal
+
+Simply press:
 
 ```
-npm run test -- <path to suite>
+Ctrl + D
 ```
 
-To run all test with authorization
+or type:
 
-```
-npm run test:auth
-```
-
-To run only specific test suite with authorization
-
-```
-npm run test:auth -- <path to suite>
+```bash
+exit
 ```
 
-### Auto-fix and format
-
-```
-npm run lint
-```
-
-```
-npm run format
-```
-
-### Debugging in VSCode
-
-Press <kbd>F5</kbd> to debug.
-
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+---
