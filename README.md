@@ -62,4 +62,12 @@ or type:
 exit
 ```
 
+## Security Vulnerabilities Scan
+
+To check your project dependencies for known security vulnerabilities, run the following command in the terminal:
+
+```bash
+npm run audit
+```
+
 ---
