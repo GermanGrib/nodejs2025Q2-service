@@ -34,8 +34,12 @@ Make sure to create a `.env` file in the root of your project with these variabl
 1. **Build and start the containers:**
 
 ```bash
-docker-compose up --build
+docker-compose up -d --build
 ```
+
+1. docker exec -it nest_app sh
+2. npx prisma migrate deploy
+3. npm run test
 
 This command will:
 
@@ -62,32 +66,24 @@ docker-compose down
 
 To run tests inside the running app container, follow these steps:
 
-1. **List running containers** (to get the container ID or name, if needed):
-
-```bash
-docker ps
-```
-
-2. **Access the app container shell:**
+1. **Access the app container shell:**
 
 ```bash
 docker exec -it nest_app sh
 ```
 
-3. **Run commands inside the nest_app container:**
+2. **Migrate DB:**
+   Copy command below and paste to c.line in container:
 
-```bash
+```
 npx prisma migrate dev --name init
 ```
 
-```bash
-npm test
+3. **Run the tests inside the container:**
+   Copy command below and paste to c.line in container:
+
 ```
-
-Alternatively, for watch mode:
-
-```bash
-npm run test:watch
+npm run test
 ```
 
 To exit the container shell, type `exit`.

@@ -2,47 +2,43 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:15-alpine
-    container_name: postgres_container
-    restart: unless-stopped
+    image: postgres:latest
+    container_name: library_postgres
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    ports:
-      - "${DB_PORT}:5432"
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      - postgres_logs:/var/log/postgresql
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
     networks:
-      - app_network
+      - library_network
+    restart: unless-stopped
 
   app:
-    build: .
-    container_name: nest_app
-    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: library_app
     depends_on:
-      postgres:
-        condition: service_healthy
-    ports:
-      - "${PORT}:${PORT}"
+      - postgres
     environment:
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public
+    ports:
+      - ${APP_PORT}:${APP_PORT}
     volumes:
-      - ./src:/app/src
-      - ./prisma:/app/prisma
+      - .:/app
+      - /app/node_modules
     networks:
-      - app_network
-
-    command: [ "sh", "-c", "echo 'Waiting for PostgreSQL...' && until pg_isready -h postgres -p 5432 -U ${DB_USER} -d ${DB_NAME} -t 1; do sleep 2; done && npx prisma migrate deploy && npm run start:dev" ]
+      - library_network
+    restart: unless-stopped
 
 volumes:
   postgres_data:
+  postgres_logs:
 
 networks:
-  app_network:
+  library_network:
     driver: bridge

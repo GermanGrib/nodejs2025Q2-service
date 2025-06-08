@@ -2,18 +2,17 @@ FROM node:22.14.0-alpine
 
 WORKDIR /app
 
-RUN apk add --no-cache postgresql-client
-
 COPY package*.json ./
 COPY prisma ./prisma/
 
 RUN npm install
-RUN npx prisma generate
 
 COPY . .
 
 RUN npm run build
 
-EXPOSE ${PORT}
+RUN npx prisma generate
 
-CMD ["npm", "run", "start:dev"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npm run start:prod"]
+
+EXPOSE ${PORT}
