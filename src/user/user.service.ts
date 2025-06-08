@@ -7,7 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { validate as isValidUUID } from 'uuid';
-import { PrismaService } from '../prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class UserService {
@@ -45,7 +45,6 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto) {
     try {
-      // Удаляем пользователя, если он уже существует (чтобы тест проходил)
       await this.prisma.user.deleteMany({
         where: { login: createUserDto.login },
       });

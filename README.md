@@ -1,73 +1,111 @@
-# Running the Application with Docker and Running Tests
+# Home Library Project
 
-## How to start the containers
+This project is a NestJS backend application connected to a PostgreSQL database using Prisma. The project is
+containerized using Docker and Docker Compose.
 
-1. Open your terminal (command prompt).
+---
 
-2. Navigate to the project folder (where the `docker-compose.yml` file is located).
+## Prerequisites
 
-3. Run this command to build and start the containers:
+- Docker
+- Docker Compose
 
-```bash
-docker-compose up --build -d
+---
+
+## Environment Variables
+
+The project uses the following environment variables (in a `.env` file):
+
+```
+PORT=4000
+DB_USER=nestuser
+DB_PASSWORD=strongpass
+DB_NAME=nestdb
+DB_PORT=5432
+DATABASE_URL=postgresql://nestuser:strongpass@postgres:5432/nestdb?schema=public
 ```
 
-- This command will download necessary images, build your app, and start everything in the background.
+Make sure to create a `.env` file in the root of your project with these variables before running the project.
 
-4. Check that the containers are running:
+---
+
+## How to Run the Project with Docker
+
+1. **Build and start the containers:**
+
+```bash
+docker-compose up --build
+```
+
+This command will:
+
+- Build the NestJS application image.
+- Start the PostgreSQL database container.
+- Run database migrations using Prisma.
+- Start the NestJS app in development mode with hot-reloading.
+
+2. **Accessing the Application:**
+
+The backend server will be accessible on `http://localhost:4000` (or the port you specified in `.env`).
+
+3. **Stopping the containers:**
+
+To stop the running containers, press `Ctrl+C` in the terminal where `docker-compose` is running, then run:
+
+```bash
+docker-compose down
+```
+
+---
+
+## Running Tests Inside the Docker Container
+
+To run tests inside the running app container, follow these steps:
+
+1. **List running containers** (to get the container ID or name, if needed):
 
 ```bash
 docker ps
 ```
 
-- You should see containers named `nest_app` and `postgres_container` in the list.
-
----
-
-## How to enter the application container terminal
-
-Run this command:
+2. **Access the app container shell:**
 
 ```bash
 docker exec -it nest_app sh
 ```
 
-- This will open a terminal inside the app container.
+3. **Run commands inside the nest_app container:**
+
+```bash
+npx prisma migrate dev --name init
+```
+
+```bash
+npm test
+```
+
+Alternatively, for watch mode:
+
+```bash
+npm run test:watch
+```
+
+To exit the container shell, type `exit`.
 
 ---
 
-## How to run tests inside the container
+## Project Structure Highlights
 
-Once inside the container terminal, run:
-
-```bash
-npm run test
-```
-
-- This will start the app’s tests and show the results in the terminal.
+- `Dockerfile` - Dockerfile to build the NestJS application container.
+- `docker-compose.yml` - Defines PostgreSQL and the NestJS app services.
+- `.env` - Environment variables for database and app configuration.
+- `prisma/` - Prisma schema and migration files.
+- `src/` - NestJS application source code.
 
 ---
 
-## How to exit the container terminal
+## Notes
 
-Simply press:
-
-```
-Ctrl + D
-```
-
-or type:
-
-```bash
-exit
-```
-
-## Security Vulnerabilities Scan
-
-To check your project dependencies for known security vulnerabilities, run the following command in the terminal:
-
-```bash
-npm run audit
-```
-
----
+- The app container waits for the PostgreSQL service to be healthy before running migrations and starting the app.
+- Database migrations are applied automatically on container startup.
+- Volumes are configured to persist PostgreSQL data and logs between container restarts.
