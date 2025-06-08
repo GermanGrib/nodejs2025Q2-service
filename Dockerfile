@@ -13,6 +13,6 @@ RUN npm run build
 
 RUN npx prisma generate
 
-CMD ["sh", "-c", "npx prisma migrate deploy && npm run start:prod"]
+CMD ["npm", "run", "start:dev"]
 
 EXPOSE ${PORT}

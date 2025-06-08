@@ -41,7 +41,7 @@ export class ArtistService {
       grammy: createArtistDto.grammy,
     };
 
-    this.prisma.artist.create({ data: newArtist });
+    await this.prisma.artist.create({ data: newArtist });
     return newArtist;
   }
 
@@ -76,7 +76,7 @@ export class ArtistService {
       throw new NotFoundException('Artist not found');
     }
 
-    this.prisma.artist.delete({ where: { id } });
+    await this.prisma.artist.delete({ where: { id } });
     this.eventEmitter.emit('artist.deleted', id);
   }
 }
