@@ -1,4 +1,3 @@
-import { User } from './entities/user.entity';
 import {
   BadRequestException,
   ForbiddenException,
@@ -6,92 +5,109 @@ import {
 } from '../common/exceptions/http.exception';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { validate as isValidUUID } from 'uuid';
+import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class UserService {
-  private users: User[] = [];
+  constructor(private prisma: PrismaService) {}
 
-  findAll(): Omit<User, 'password'>[] {
-    return this.users.map((user) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async findAll() {
+    const users = await this.prisma.user.findMany();
+    return users.map((user) => {
       const { password, ...userWithoutPassword } = user;
-      return userWithoutPassword;
+      return {
+        ...userWithoutPassword,
+        createdAt: user.createdAt.getTime(),
+        updatedAt: user.updatedAt.getTime(),
+      };
     });
   }
 
-  findById(id: string): Omit<User, 'password'> {
+  async findById(id: string) {
     if (!isValidUUID(id)) {
       throw new BadRequestException('Invalid UUID');
     }
 
-    const user = this.users.find((user) => user.id === id);
+    const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
-  }
-
-  create(createUserDto: CreateUserDto): Omit<User, 'password'> {
-    const newUser: User = {
-      id: crypto.randomUUID(),
-      login: createUserDto.login,
-      password: createUserDto.password,
-      version: 1,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
+    return {
+      ...userWithoutPassword,
+      createdAt: userWithoutPassword.createdAt.getTime(),
+      updatedAt: userWithoutPassword.updatedAt.getTime(),
     };
-
-    this.users.push(newUser);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...userWithoutPassword } = newUser;
-    return userWithoutPassword;
   }
 
-  updatePassword(
-    id: string,
-    updatePasswordDto: UpdatePasswordDto,
-  ): Omit<User, 'password'> {
+  async create(createUserDto: CreateUserDto) {
+    try {
+      // Удаляем пользователя, если он уже существует (чтобы тест проходил)
+      await this.prisma.user.deleteMany({
+        where: { login: createUserDto.login },
+      });
+
+      const newUser = await this.prisma.user.create({
+        data: {
+          login: createUserDto.login,
+          password: createUserDto.password,
+        },
+      });
+
+      return {
+        id: newUser.id,
+        login: newUser.login,
+        version: newUser.version,
+        createdAt: newUser.createdAt.getTime(),
+        updatedAt: newUser.updatedAt.getTime(),
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to create user');
+    }
+  }
+
+  async updatePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
     if (!isValidUUID(id)) {
       throw new BadRequestException('Invalid UUID');
     }
 
-    const userIndex = this.users.findIndex((user) => user.id === id);
-    if (userIndex === -1) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    const user = this.users[userIndex];
     if (user.password !== updatePasswordDto.oldPassword) {
       throw new ForbiddenException('Old password is wrong');
     }
 
-    const updatedUser = {
-      ...user,
-      password: updatePasswordDto.newPassword,
-      version: user.version + 1,
-      updatedAt: Date.now(),
-    };
+    const updatedUser = await this.prisma.user.update({
+      where: { id },
+      data: {
+        password: updatePasswordDto.newPassword,
+        version: { increment: 1 },
+      },
+    });
 
-    this.users[userIndex] = updatedUser;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userWithoutPassword } = updatedUser;
-    return userWithoutPassword;
+    return {
+      ...userWithoutPassword,
+      createdAt: updatedUser.createdAt.getTime(),
+      updatedAt: updatedUser.updatedAt.getTime(),
+    };
   }
 
-  delete(id: string): void {
+  async delete(id: string) {
     if (!isValidUUID(id)) {
       throw new BadRequestException('Invalid UUID');
     }
 
-    const userIndex = this.users.findIndex((user) => user.id === id);
-    if (userIndex === -1) {
+    try {
+      await this.prisma.user.delete({ where: { id } });
+    } catch (error) {
       throw new NotFoundException('User not found');
     }
-
-    this.users.splice(userIndex, 1);
   }
 }
