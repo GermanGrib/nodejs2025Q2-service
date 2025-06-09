@@ -37,9 +37,11 @@ Make sure to create a `.env` file in the root of your project with these variabl
 docker-compose up -d --build
 ```
 
-1. docker exec -it nest_app sh
-2. npx prisma migrate deploy
-3. npm run test
+1. docker exec -it library_app sh
+2. npx prisma migrate dev
+3. npx prisma generate
+4. npm run test (If Favorites is not ready yet and things are breaking, run the tests one by one instead manually.
+   )
 
 This command will:
 
