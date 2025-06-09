@@ -1,4 +1,5 @@
 node_modules
+prisma/.env
 dist
 Dockerfile
 Dockerfile.dev

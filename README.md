@@ -1,4 +1,4 @@
-## How to Run the Project with Docker
+## How to Run the Project with Docker DEV --WATCH
 
 1. **Build and start the containers:**
 
@@ -23,6 +23,7 @@ npx prisma generate
 ```
 
 4. **Run the tests (locally or in the container):**
+   If locally - do npm install and then npm run test
 
 ```bash
 npm run test
@@ -37,6 +38,20 @@ npm run audit
 ```
 
 This command will analyze your project's dependencies and display a report of any known vulnerabilities.
+
+## How to Run the Project with Docker BUILD <500mb
+
+Just to check the size
+
+```bash
+docker build -f Dockerfile.prod -t my-nest-app-prod .
+```
+
+or TO START the project
+
+```bash
+docker-compose -f docker-compose.prod.yml up -d --build
+```
 
 ---
 
