@@ -28,6 +28,16 @@ npx prisma generate
 npm run test
 ```
 
+# To Run an Audit
+
+To check for vulnerabilities in dependencies, run:
+
+```bash
+npm run audit
+```
+
+This command will analyze your project's dependencies and display a report of any known vulnerabilities.
+
 ---
 
 # Home Library Project

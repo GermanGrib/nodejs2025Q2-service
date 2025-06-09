@@ -17,6 +17,7 @@ export class UserService {
     const users = await this.prisma.user.findMany();
     return users.map((user) => {
       const { password, ...userWithoutPassword } = user;
+      void password;
       return {
         ...userWithoutPassword,
         createdAt: user.createdAt.getTime(),
@@ -36,6 +37,7 @@ export class UserService {
     }
 
     const { password, ...userWithoutPassword } = user;
+    void password;
     return {
       ...userWithoutPassword,
       createdAt: userWithoutPassword.createdAt.getTime(),
@@ -91,6 +93,7 @@ export class UserService {
     });
 
     const { password, ...userWithoutPassword } = updatedUser;
+    void password;
     return {
       ...userWithoutPassword,
       createdAt: updatedUser.createdAt.getTime(),
