@@ -1,5 +1,6 @@
 services:
   app:
+    image: germangribanov/library_app_prod:latest
     build:
       context: .
       dockerfile: Dockerfile.prod
