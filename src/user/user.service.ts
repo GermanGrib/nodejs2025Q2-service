@@ -45,6 +45,10 @@ export class UserService {
     };
   }
 
+  async findOneByLogin(login: string) {
+    return this.prisma.user.findUnique({ where: { login } });
+  }
+
   async create(createUserDto: CreateUserDto) {
     try {
       await this.prisma.user.deleteMany({

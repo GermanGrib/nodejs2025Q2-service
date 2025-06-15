@@ -4,7 +4,7 @@ import {
   NestModule,
   ValidationPipe,
 } from '@nestjs/common';
-import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_PIPE, Reflector } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
@@ -17,10 +17,14 @@ import { PrismaModule } from './prisma/prisma.module';
 import { LoggingService } from './logging/logging.service';
 import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 import { RequestLoggingMiddleware } from './middleware/request-logging.middleware';
+import { AuthModule } from './auth/auth.module';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     EventEmitterModule.forRoot(),
     PrismaModule,
     UserModule,
@@ -28,9 +32,15 @@ import { RequestLoggingMiddleware } from './middleware/request-logging.middlewar
     TrackModule,
     AlbumModule,
     FavoritesModule,
+    AuthModule,
   ],
   providers: [
     LoggingService,
+    Reflector,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
     {
       provide: APP_PIPE,
       useClass: ValidationPipe,
