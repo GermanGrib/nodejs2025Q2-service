@@ -23,19 +23,26 @@ export class JwtAuthGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
-    if (isPublic) return true;
+
+    if (isPublic) {
+      return true;
+    }
 
     const request = context.switchToHttp().getRequest<Request>();
     const token = this.extractToken(request);
-    if (!token) throw new UnauthorizedException('Token required');
+
+    if (!token) {
+      throw new UnauthorizedException('Token required');
+    }
 
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: this.configService.get<string>('JWT_SECRET_KEY'), // Используем configService
+        secret: this.configService.get<string>('JWT_SECRET_KEY'),
       });
+
       request.user = payload;
     } catch (error) {
-      console.error('JWT verification error:', error); // Логируем ошибку
+      console.error('JWT verification error:', error);
       throw new UnauthorizedException('Invalid token');
     }
 
