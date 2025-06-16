@@ -23,7 +23,12 @@ export class AuthController {
   @Post('signup')
   async signup(@Body() createUserDto: CreateUserDto) {
     const user = await this.authService.createUser(createUserDto);
-    return this.authService.generateTokens(user);
+    const tokens = await this.authService.generateTokens(user);
+
+    return {
+      id: user.id,
+      ...tokens,
+    };
   }
 
   @Public()
