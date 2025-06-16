@@ -34,8 +34,8 @@ export class AuthService {
     return {
       accessToken: this.jwtService.sign(payload),
       refreshToken: this.jwtService.sign(payload, {
-        secret: process.env.JWT_REFRESH_SECRET,
-        expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
+        secret: process.env.JWT_SECRET_REFRESH_KEY,
+        expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
       }),
     };
   }
@@ -47,8 +47,8 @@ export class AuthService {
     return {
       accessToken: this.jwtService.sign(payload),
       refreshToken: this.jwtService.sign(payload, {
-        secret: process.env.JWT_REFRESH_SECRET,
-        expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
+        secret: process.env.JWT_SECRET_REFRESH_KEY,
+        expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
       }),
     };
   }
@@ -56,7 +56,7 @@ export class AuthService {
   async refresh(refreshToken: string) {
     try {
       const payload = this.jwtService.verify(refreshToken, {
-        secret: process.env.JWT_REFRESH_SECRET,
+        secret: process.env.JWT_SECRET_REFRESH_KEY,
       });
 
       return {
@@ -67,8 +67,8 @@ export class AuthService {
         refreshToken: this.jwtService.sign(
           { userId: payload.userId, login: payload.login },
           {
-            secret: process.env.JWT_REFRESH_SECRET,
-            expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
+            secret: process.env.JWT_SECRET_REFRESH_KEY,
+            expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
           },
         ),
       };
