@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { Public } from './decorators/public.decorator';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -15,6 +16,13 @@ export class AuthController {
       loginDto.login,
       loginDto.password,
     );
+    return this.authService.generateTokens(user);
+  }
+
+  @Public()
+  @Post('signup')
+  async signup(@Body() createUserDto: CreateUserDto) {
+    const user = await this.authService.createUser(createUserDto);
     return this.authService.generateTokens(user);
   }
 

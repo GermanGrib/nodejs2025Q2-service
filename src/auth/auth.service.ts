@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service'; // Убедитесь, что путь правильный
 import { User } from '../user/entities/user.entity';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +16,7 @@ export class AuthService {
     password: string,
   ): Promise<Omit<User, 'password'>> {
     const user = await this.userService.findOneByLogin(login);
+    console.log('User found by login:', user);
 
     if (user && user.password === password) {
       const { password, ...userWithoutPassword } = user;
@@ -51,6 +53,14 @@ export class AuthService {
         expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
       }),
     };
+  }
+
+  async createUser(
+    createUserDto: CreateUserDto,
+  ): Promise<Omit<User, 'password'>> {
+    const user = await this.userService.create(createUserDto);
+
+    return user;
   }
 
   async refresh(refreshToken: string) {
