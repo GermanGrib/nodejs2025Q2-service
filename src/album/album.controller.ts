@@ -9,15 +9,18 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('album')
 @UsePipes(new ValidationPipe())
+@UseGuards(JwtAuthGuard)
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 

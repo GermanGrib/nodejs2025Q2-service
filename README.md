@@ -23,10 +23,10 @@ npx prisma generate
 ```
 
 4. **Run the tests (locally or in the container):**
-   If locally - do npm install and then npm run test
+   If locally - do npm install and then npm run test:auth
 
 ```bash
-npm run test
+npm run test:auth
 ```
 
 # To Run an Audit
