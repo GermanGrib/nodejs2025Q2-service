@@ -1,72 +1,86 @@
-# Home Library Service
+## How to Run the Project with Docker DEV --WATCH
 
-## Prerequisites
+1. **Build and start the containers:**
 
-- Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
-
-## Downloading
-
-```
-git clone {repository URL}
+```bash
+docker-compose up -d --build
 ```
 
-## Installing NPM modules
+2. **Access the running container:**
 
-```
-npm install
-```
-
-## Running application
-
-```
-npm start
+```bash
+docker exec -it library_app sh
 ```
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+3. **Inside the container, manually run the following commands one by one:**
 
-## Testing
-
-After application running open new terminal and enter:
-
-To run all tests without authorization
+> ⚠️ These commands must be run **inside the container terminal**. Do not run them locally or with "Run" buttons, or
+> they won't work correctly.
 
 ```
+npx prisma migrate dev
+npx prisma generate
+```
+
+4. **Run the tests (locally or in the container):**
+   If locally - do npm install and then npm run test
+
+```bash
 npm run test
 ```
 
-To run only one of all test suites
+# To Run an Audit
 
-```
-npm run test -- <path to suite>
-```
+To check for vulnerabilities in dependencies, run:
 
-To run all test with authorization
-
-```
-npm run test:auth
+```bash
+npm run audit
 ```
 
-To run only specific test suite with authorization
+This command will analyze your project's dependencies and display a report of any known vulnerabilities.
 
-```
-npm run test:auth -- <path to suite>
-```
+## How to Run the Project with Docker BUILD <500mb
 
-### Auto-fix and format
+Just to check the size
 
-```
-npm run lint
+```bash
+docker build -f Dockerfile.prod -t my-nest-app-prod .
 ```
 
+or TO START the project
+
+```bash
+docker-compose -f docker-compose.prod.yml up -d --build
 ```
-npm run format
+
+---
+
+# Home Library Project
+
+This project is a NestJS backend application connected to a PostgreSQL database using Prisma. The project is
+containerized using Docker and Docker Compose.
+
+---
+
+## Prerequisites
+
+- Docker
+- Docker Compose
+
+---
+
+## Environment Variables
+
+The project uses the following environment variables (in a `.env` file):
+
+```
+APP_PORT=4000
+POSTGRES_PORT=5432
+
+POSTGRES_USER=user
+POSTGRES_PASSWORD=password
+POSTGRES_DB=db
+DATABASE_URL=postgresql://user:password@postgres:5432/db?schema=public
 ```
 
-### Debugging in VSCode
-
-Press <kbd>F5</kbd> to debug.
-
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+Make sure to create a `.env` file in the root of your project with these variables before running the project.

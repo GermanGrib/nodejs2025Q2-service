@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   Param,
   ParseUUIDPipe,
   Post,
@@ -23,18 +24,18 @@ export class UserController {
 
   @Get()
   async findAll() {
-    return this.userService.findAll();
+    return await this.userService.findAll();
   }
 
   @Get(':id')
   async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.userService.findById(id);
+    return await this.userService.findById(id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+    return await this.userService.create(createUserDto);
   }
 
   @Put(':id')
@@ -42,12 +43,19 @@ export class UserController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
-    return this.userService.updatePassword(id, updatePasswordDto);
+    return await this.userService.updatePassword(id, updatePasswordDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id', new ParseUUIDPipe()) id: string) {
-    this.userService.delete(id);
+    try {
+      await this.userService.delete(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      throw error;
+    }
   }
 }
